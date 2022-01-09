@@ -1,10 +1,7 @@
 package moderna.rest.handler;
 
 import lombok.extern.log4j.Log4j2;
-import moderna.rest.exception.BadRequestException;
-import moderna.rest.exception.BadRequestExceptionDetails;
-import moderna.rest.exception.ExceptionDetails;
-import moderna.rest.exception.ValidationExceptionDetails;
+import moderna.rest.exception.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -69,4 +66,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
         return new ResponseEntity<>(exceptionDetails, headers, status);
     }
+
+
 }

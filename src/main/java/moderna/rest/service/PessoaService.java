@@ -2,6 +2,7 @@ package moderna.rest.service;
 
 import lombok.RequiredArgsConstructor;
 import moderna.rest.exception.BadRequestException;
+import moderna.rest.exception.DataIntegratyViolationException;
 import moderna.rest.mapper.PessoaMapper;
 import moderna.rest.model.PessoaEntity;
 import moderna.rest.repository.PessoaRepository;
@@ -39,6 +40,17 @@ public class PessoaService {
     }
 
     public PessoaEntity save(PessoaPostRequestBody pessoaPostRequestBody) {
+
+        if(buscarPessoaCPF(pessoaPostRequestBody) != null){
+            throw new DataIntegratyViolationException("CPF já cadastado na base de dados!!");
+        }
+//        var pessoaEncontrada = buscarPessoa(pessoaPostRequestBody.getCpf());
+//
+//        if (!pessoaEncontrada.equals(pessoaPostRequestBody.getCpf())){
+//            pessoaRepository.save(PessoaMapper.INSTANCE.toPessoaEntity(pessoaPostRequestBody ));
+//        } else{
+//            System.out.println("Houve um erro ao cadastrar o usuário");
+//        }
         return pessoaRepository.save(PessoaMapper.INSTANCE.toPessoaEntity(pessoaPostRequestBody ));
     }
 
@@ -47,12 +59,18 @@ public class PessoaService {
     }
 
     public void replace(PessoaPutRequestBody pessoaPutRequestBody) {
-       PessoaEntity savedPessoa =  findByIdOrThrowBadRequestException(pessoaPutRequestBody.getId());
+        PessoaEntity savedPessoa = findByIdOrThrowBadRequestException(pessoaPutRequestBody.getId());
         PessoaEntity pessoaEntity = PessoaMapper.INSTANCE.toPessoaEntity(pessoaPutRequestBody);
         pessoaEntity.setId(savedPessoa.getId());
         pessoaRepository.save(pessoaEntity);
+    }
 
-
+    private PessoaEntity buscarPessoaCPF(PessoaPostRequestBody objDTO){
+        PessoaEntity obj = pessoaRepository.buscarPessoaCPF(objDTO.getCpf());
+        if (obj != null){
+            return obj;
+        }
+        return null;
     }
 
 

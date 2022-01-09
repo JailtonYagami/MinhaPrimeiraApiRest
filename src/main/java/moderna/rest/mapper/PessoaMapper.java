@@ -13,6 +13,6 @@ public abstract class PessoaMapper {
 
     public abstract PessoaEntity toPessoaEntity(PessoaPostRequestBody pessoaPostRequestBody);
 
-    public abstract PessoaEntity toPessoaEntity(PessoaPutRequestBody pessoaPostRequestBody);
+    public abstract PessoaEntity toPessoaEntity(PessoaPutRequestBody pessoaPutRequestBody);
 
 }
