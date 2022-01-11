@@ -1,8 +1,8 @@
 package moderna.rest.service;
 
 import lombok.RequiredArgsConstructor;
-import moderna.rest.exception.BadRequestException;
 import moderna.rest.exception.DataIntegratyViolationException;
+import moderna.rest.exception.ObjectNotFoundException;
 import moderna.rest.mapper.PessoaMapper;
 import moderna.rest.model.PessoaEntity;
 import moderna.rest.repository.PessoaRepository;
@@ -19,7 +19,6 @@ import java.util.List;
 public class PessoaService {
 
 
-
     private final PessoaRepository pessoaRepository;
 
     public Page<PessoaEntity> listAll(Pageable pageable) {
@@ -28,30 +27,23 @@ public class PessoaService {
 
     public PessoaEntity findByIdOrThrowBadRequestException(long id) {
         return pessoaRepository.findById(id)
-                .orElseThrow(() -> new BadRequestException("Pessoa not found!!!"));
+                .orElseThrow(()-> new ObjectNotFoundException(
+                "Objeto não encontrado! Id: " + id + ", Tipo: " + PessoaEntity.class.getName()));
     }
 
-    public List<PessoaEntity> findBynome( String nome) {
+    public List<PessoaEntity> findBynome(String nome) {
         return pessoaRepository.findBynome(nome);
     }
 
-    public List<PessoaEntity> findBycpf( String cpf) {
-        return pessoaRepository.findBycpf(cpf);
-    }
 
-    public PessoaEntity save(PessoaPostRequestBody pessoaPostRequestBody) {
-
-        if(buscarPessoaCPF(pessoaPostRequestBody) != null){
-            throw new DataIntegratyViolationException("CPF já cadastado na base de dados!!");
+    public PessoaEntity create(PessoaPostRequestBody pessoaPostRequestBody) {
+        if (findByCPF(pessoaPostRequestBody) != null) {
+            throw new DataIntegratyViolationException("CPF já cadastrado na base de dados!!!");
         }
-//        var pessoaEncontrada = buscarPessoa(pessoaPostRequestBody.getCpf());
-//
-//        if (!pessoaEncontrada.equals(pessoaPostRequestBody.getCpf())){
-//            pessoaRepository.save(PessoaMapper.INSTANCE.toPessoaEntity(pessoaPostRequestBody ));
-//        } else{
-//            System.out.println("Houve um erro ao cadastrar o usuário");
-//        }
-        return pessoaRepository.save(PessoaMapper.INSTANCE.toPessoaEntity(pessoaPostRequestBody ));
+        PessoaEntity newObjPessoa = new PessoaEntity(null, pessoaPostRequestBody.getNome(),
+                pessoaPostRequestBody.getCpf(), pessoaPostRequestBody.getGenero());
+
+        return pessoaRepository.save(PessoaMapper.INSTANCE.toPessoaEntity(pessoaPostRequestBody));
     }
 
     public void delete(long id) {
@@ -65,9 +57,9 @@ public class PessoaService {
         pessoaRepository.save(pessoaEntity);
     }
 
-    private PessoaEntity buscarPessoaCPF(PessoaPostRequestBody objDTO){
-        PessoaEntity obj = pessoaRepository.buscarPessoaCPF(objDTO.getCpf());
-        if (obj != null){
+    private PessoaEntity findByCPF(PessoaPostRequestBody objDTO) {
+        PessoaEntity obj = pessoaRepository.findByCPF(objDTO.getCpf());
+        if (obj != null) {
             return obj;
         }
         return null;

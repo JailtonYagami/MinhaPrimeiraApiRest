@@ -34,18 +34,13 @@ public class PessoaController {
     }
 
     @GetMapping(path = "/find")
-    public ResponseEntity<List<PessoaEntity>> findBynome(@RequestParam String nome){
+    public ResponseEntity<List<PessoaEntity>> findBynome(@RequestParam String nome) {
         return ResponseEntity.ok((pessoaService.findBynome(nome)));
     }
 
-    @GetMapping(path = "/findcpf")
-    public ResponseEntity<List<PessoaEntity>> findBycpf(@RequestParam String cpf){
-        return ResponseEntity.ok((pessoaService.findBycpf(cpf)));
-    }
-
     @PostMapping("/cadastrar-pessoa")
-    public ResponseEntity<PessoaEntity> save(@RequestBody @Valid PessoaPostRequestBody pessoaPostRequestBody) {
-        return new ResponseEntity<>(pessoaService.save(pessoaPostRequestBody), HttpStatus.CREATED);
+    public ResponseEntity<PessoaEntity> create(@RequestBody @Valid PessoaPostRequestBody pessoaPostRequestBody) {
+        return new ResponseEntity<>(pessoaService.create(pessoaPostRequestBody), HttpStatus.CREATED);
     }
 
     @DeleteMapping(path = "/{id}")
